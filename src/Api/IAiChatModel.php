@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace AssistentApi\Api;
+namespace AssistentFoundation\Api;
 
 interface IAiChatModel {
 

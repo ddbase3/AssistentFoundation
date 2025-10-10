@@ -1,18 +1,18 @@
 <?php declare(strict_types=1);
 
-namespace AssistentApi;
+namespace AssistentFoundation;
 
 use Base3\Api\IContainer;
 use Base3\Api\IPlugin;
 
-class AssistentApiPlugin implements IPlugin {
+class AssistentFoundationPlugin implements IPlugin {
 
 	public function __construct(private readonly IContainer $container) {}
 
 	// Implementation of IBase
 
 	public static function getName(): string {
-		return 'assistentapiplugin';
+		return 'assistentfoundationplugin';
 	}
 
 	// Implementation of IPlugin
