@@ -1,13 +1,13 @@
-# AssistentFoundation Plugin
+# AssistantFoundation Plugin
 
-The **AssistentFoundation Plugin** provides the foundational API layer for all MissionBay and BASE3 components related to AI, chatbots, and agent-based systems. It defines a clean set of interfaces that act as contracts between different parts of the framework, ensuring modularity, stability, and consistent integration across plugins.
+The **AssistantFoundation Plugin** provides the foundational API layer for all MissionBay and BASE3 components related to AI, chatbots, and agent-based systems. It defines a clean set of interfaces that act as contracts between different parts of the framework, ensuring modularity, stability, and consistent integration across plugins.
 
 ---
 
 ## Purpose
 
 In complex agent-driven systems, a clear separation between **API definitions** and their **implementations** is essential.
-The AssistentFoundation Plugin serves exactly this purpose:
+The AssistantFoundation Plugin serves exactly this purpose:
 
 * Central place for all **interfaces** related to AI assistants, chatbots, and MissionBay workflows
 * Guarantees consistent **contracts** for developers implementing or extending functionality
@@ -32,12 +32,12 @@ It does not contain implementations, storage logic, or UI elements. Instead, it 
 
 ## Integration
 
-The AssistentFoundation Plugin is designed to be imported by other MissionBay/BASE3 plugins, such as:
+The AssistantFoundation Plugin is designed to be imported by other MissionBay/BASE3 plugins, such as:
 
 * **Chatbot** (Services)
 * **MissionBay** (execution engine and node definitions)
 
-By depending only on the interfaces in AssistentFoundation, these plugins remain decoupled from specific implementations.
+By depending only on the interfaces in AssistantFoundation, these plugins remain decoupled from specific implementations.
 
 ---
 
@@ -53,7 +53,7 @@ By depending only on the interfaces in AssistentFoundation, these plugins remain
 ## Example Structure
 
 ```
-AssistentFoundation/
+AssistantFoundation/
  └─ src/
      └─ Api/
          ├─ IAgent.php
