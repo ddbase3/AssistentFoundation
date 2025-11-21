@@ -24,6 +24,21 @@ interface IAiChatModel {
 	public function raw(array $messages, array $tools = []): mixed;
 
 	/**
+	 * Streams a chat completion in real-time.
+	 * The model implementation MUST:
+	 * - call $onData(string $deltaChunk) for every incremental content piece
+	 * - call $onMeta(array $metaChunk) for finish_reason, ids, etc (optional)
+	 * - stop streaming when the model signals completion
+	 *
+	 * @param array $messages   List of rich message objects
+	 * @param array $tools      Tool definitions (optional)
+	 * @param callable $onData  function(string $delta) : void
+	 * @param callable $onMeta  function(array $meta) : void    // optional metadata
+	 * @return void
+	 */
+	public function stream( array $messages, array $tools, callable $onData, callable $onMeta = null): void;
+
+	/**
 	 * Sets options like model, temperature, etc.
 	 *
 	 * @param array $options
