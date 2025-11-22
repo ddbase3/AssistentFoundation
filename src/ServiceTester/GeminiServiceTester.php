@@ -5,34 +5,36 @@ namespace AssistantFoundation\ServiceTester;
 use AssistantFoundation\Api\IAiServiceTester;
 
 /**
- * Validates Anthropic API key via POST /v1/messages.
+ * Validates Google Gemini API key via minimal generateContent call.
  */
-class AnthropicServiceTester implements IAiServiceTester {
+class GeminiServiceTester implements IAiServiceTester {
 
     public static function getType(): string {
-        return 'anthropic';
+        return 'gemini';
     }
 
     public function test(array $config): array {
         $endpoint = $config['endpoint'] ?? '';
-        $apikey   = $config['apikey'] ?? '';
+        $apikey = $config['apikey'] ?? '';
 
         if (!$endpoint || !$apikey) {
             return [
-                'ok'           => false,
+                'ok' => false,
                 'apikey_valid' => false,
-                'message'      => 'Missing endpoint or API key'
+                'message' => 'Missing endpoint or API key'
             ];
         }
 
-        // Config includes /v1 → correct endpoint is simply /messages
-        $url = rtrim($endpoint, '/') . '/messages';
+        // Base URL + standard minimal test endpoint
+        $url = rtrim($endpoint, '/') . '/models/gemini-2.0-flash:generateContent?key=' . urlencode($apikey);
 
         $payload = json_encode([
-            "model" => "claude-3-haiku-20240307",
-            "max_tokens" => 1,
-            "messages" => [
-                ["role" => "user", "content" => "ping"]
+            "contents" => [
+                [
+                    "parts" => [
+                        ["text" => "ping"]
+                    ]
+                ]
             ]
         ]);
 
@@ -41,46 +43,44 @@ class AnthropicServiceTester implements IAiServiceTester {
         curl_setopt($curl, CURLOPT_POST, true);
         curl_setopt($curl, CURLOPT_POSTFIELDS, $payload);
         curl_setopt($curl, CURLOPT_HTTPHEADER, [
-            'Content-Type: application/json',
-            'x-api-key: ' . $apikey,
-            'anthropic-version: 2023-06-01'   // REQUIRED or API returns 404
+            'Content-Type: application/json'
         ]);
 
         $response = curl_exec($curl);
-        $error    = curl_error($curl);
-        $code     = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        $error = curl_error($curl);
+        $code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
         curl_close($curl);
 
         if ($error) {
             return [
-                'ok'           => false,
+                'ok' => false,
                 'apikey_valid' => false,
-                'message'      => $error
+                'message' => $error
             ];
         }
 
-        // invalid key
+        // invalid key or missing key
         if ($code === 401 || $code === 403) {
             return [
-                'ok'           => false,
+                'ok' => false,
                 'apikey_valid' => false,
-                'message'      => 'Invalid API key'
+                'message' => 'Invalid API key'
             ];
         }
 
         // success
         if ($code >= 200 && $code < 300) {
             return [
-                'ok'           => true,
+                'ok' => true,
                 'apikey_valid' => true,
-                'message'      => 'Anthropic OK'
+                'message' => 'Google Gemini OK'
             ];
         }
 
         return [
-            'ok'           => false,
+            'ok' => false,
             'apikey_valid' => null,
-            'message'      => 'HTTP ' . $code . ': ' . $response
+            'message' => 'HTTP ' . $code . ': ' . $response
         ];
     }
 }

@@ -5,17 +5,17 @@ namespace AssistantFoundation\ServiceTester;
 use AssistantFoundation\Api\IAiServiceTester;
 
 /**
- * Validates Anthropic API key via POST /v1/messages.
+ * Validates Mistral API key via minimal chat completion call.
  */
-class AnthropicServiceTester implements IAiServiceTester {
+class MistralServiceTester implements IAiServiceTester {
 
     public static function getType(): string {
-        return 'anthropic';
+        return 'mistral';
     }
 
     public function test(array $config): array {
         $endpoint = $config['endpoint'] ?? '';
-        $apikey   = $config['apikey'] ?? '';
+        $apikey   = $config['apikey']   ?? '';
 
         if (!$endpoint || !$apikey) {
             return [
@@ -25,15 +25,15 @@ class AnthropicServiceTester implements IAiServiceTester {
             ];
         }
 
-        // Config includes /v1 → correct endpoint is simply /messages
-        $url = rtrim($endpoint, '/') . '/messages';
+        // Mistral: OpenAI-kompatibel
+        $url = rtrim($endpoint, '/') . '/chat/completions';
 
         $payload = json_encode([
-            "model" => "claude-3-haiku-20240307",
-            "max_tokens" => 1,
+            "model" => "mistral-small-latest",  // klein & günstig → ideal für Ping-Test
             "messages" => [
                 ["role" => "user", "content" => "ping"]
-            ]
+            ],
+            "max_tokens" => 1
         ]);
 
         $curl = curl_init($url);
@@ -42,8 +42,7 @@ class AnthropicServiceTester implements IAiServiceTester {
         curl_setopt($curl, CURLOPT_POSTFIELDS, $payload);
         curl_setopt($curl, CURLOPT_HTTPHEADER, [
             'Content-Type: application/json',
-            'x-api-key: ' . $apikey,
-            'anthropic-version: 2023-06-01'   // REQUIRED or API returns 404
+            'Authorization: Bearer ' . $apikey
         ]);
 
         $response = curl_exec($curl);
@@ -73,7 +72,7 @@ class AnthropicServiceTester implements IAiServiceTester {
             return [
                 'ok'           => true,
                 'apikey_valid' => true,
-                'message'      => 'Anthropic OK'
+                'message'      => 'Mistral OK'
             ];
         }
 
@@ -84,3 +83,4 @@ class AnthropicServiceTester implements IAiServiceTester {
         ];
     }
 }
+
