@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace AssistentFoundation\Api;
+namespace AssistantFoundation\Api;
 
 /**
  * Interface for embedding models (e.g. OpenAI, Ollama, HuggingFace).
